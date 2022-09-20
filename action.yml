@@ -15,6 +15,6 @@ runs:
   image: 'Dockerfile'
   args:
   - '-b'
-  - ${{ inputs.owner }}
+  - ${{ inputs.branch }}
   - '-t'
-  - ${{ inputs.name }}
+  - ${{ inputs.targetBranch }}
