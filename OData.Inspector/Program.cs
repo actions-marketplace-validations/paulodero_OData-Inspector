@@ -12,22 +12,13 @@ static TService Get<TService>(IHost host)
 
 static async Task StartAnalysisAsync(ActionInputs inputs, IHost host)
 {
-    var updatedMetrics = "100%";
-    var title = "OData Inspector";
-    var summary = "The summary";
-
     await Task.Delay(1);
 
     Get<ILoggerFactory>(host)
            .CreateLogger("OData.Inspector")
     .LogError("An error has been detected in the flow.");
 
-    // https://docs.github.com/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter
-    Console.WriteLine($"::set-output name=updated-metrics::{updatedMetrics}");
-    Console.WriteLine($"::set-output name=summary-title::{title}");
-    Console.WriteLine($"::set-output name=summary-details::{summary}");
-
-    Environment.Exit(0);
+    Environment.Exit(-1);
 }
 
 var parser = Default.ParseArguments<ActionInputs>(() => new(), args);

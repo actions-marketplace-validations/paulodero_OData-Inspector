@@ -1,5 +1,5 @@
-name: '.NET code metric analyzer'
-description: 'A Github action that maintains a CODE_METRICS.md file, reporting cyclomatic complexity, maintainability index, etc.'
+name: 'OData schema inspector'
+description: 'OData schema inspector to detect breaking change and other dangerous changes.'
 branding:
   icon: sliders
   color: purple
