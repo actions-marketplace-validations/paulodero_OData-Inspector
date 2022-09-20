@@ -1,6 +1,4 @@
-﻿using CommandLine;
-
-using IHost host = Host.CreateDefaultBuilder(args)
+﻿using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((_, services) =>
     {
     })

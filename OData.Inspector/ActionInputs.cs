@@ -13,12 +13,12 @@ public class ActionInputs
 
     [Option('b', "branch",
         Required = true,
-        HelpText = "The owner, for example: \"dotnet\". Assign from `github.repository_owner`.")]
+        HelpText = "The source branch.")]
     public string SourceBranch { get; set; } = null!;
 
 
     [Option('t', "targetBranch",
         Required = true,
-        HelpText = "The owner, for example: \"dotnet\". Assign from `github.repository_owner`.")]
+        HelpText = "The target branch.")]
     public string TargetBranch { get; set; } = null!;
 }
