@@ -1,4 +1,6 @@
-﻿using IHost host = Host.CreateDefaultBuilder(args)
+﻿using CommandLine;
+
+using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((_, services) =>
     {
     })
@@ -15,6 +17,10 @@ static async Task StartAnalysisAsync(ActionInputs inputs, IHost host)
     var summary = "The summary";
 
     await Task.Delay(1);
+
+    Get<ILoggerFactory>(host)
+           .CreateLogger("OData.Inspector")
+    .LogError("An error has been detected in the flow.");
 
     // https://docs.github.com/actions/reference/workflow-commands-for-github-actions#setting-an-output-parameter
     Console.WriteLine($"::set-output name=updated-metrics::{updatedMetrics}");
