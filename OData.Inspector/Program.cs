@@ -36,7 +36,7 @@ public class Program
     /// <returns>async task.</returns>
     private static async Task StartSchemaAnalysisAsync(ActionInputs inputs, IHost host)
     {
-        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(inputs.Username, inputs.SourceBranch);
+        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(inputs.RepoName,inputs.RepoName, inputs.SourceBranch);
         var validator = new SchemaValidator(sourceSchemas);
         
         validator.RunValidation();

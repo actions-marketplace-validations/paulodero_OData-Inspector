@@ -23,8 +23,13 @@ public class ActionInputs
     public string TargetBranch { get; set; } = null!;
 
 
-    [Option('u', "username",
+    [Option('o', "repoOwner",
         Required = true,
-        HelpText = "GitHub username.")]
-    public string Username { get; set; } = null!;
+        HelpText = "Repository owner.")]
+    public string RepoOwner { get; set; } = null!;
+
+    [Option('n', "repoName",
+    Required = true,
+    HelpText = "Name of the repository.")]
+    public string RepoName { get; set; } = null!;
 }
