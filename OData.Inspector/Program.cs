@@ -1,4 +1,6 @@
-﻿using OData.Schema.Validation.Utils;
+﻿using GillSoft.XmlComparer;
+using GillSoft.XmlComparer.ConsoleApp;
+using OData.Schema.Validation.Utils;
 
 namespace OData.Inspector;
 public class Program
@@ -32,10 +34,11 @@ public class Program
     static async Task StartSchemaAnalysisAsync(ActionInputs inputs, IHost host)
     {
         string sourceBranch = "patch-1";
-        string destinationBranch = "patch-1";
-        string userName = "wachugamaina";
-        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(userName, sourceBranch);
-        var destinationSchemas = await GitUtilities.GetSchemasFromBranch(userName, destinationBranch);
+        string destinationBranch = "master";
+        string sourceUserName = "wachugamaina";
+        string destinationUserName = "paulodero";
+        var destinationSchemas = await GitUtilities.GetSchemasFromBranch(destinationUserName, destinationBranch);
+        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(sourceUserName, sourceBranch);
 
         ParentValidator validator = new ParentValidator(sourceSchemas, destinationSchemas);
         validator.RunValidateion();

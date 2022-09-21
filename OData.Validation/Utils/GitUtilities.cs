@@ -1,12 +1,15 @@
 ﻿using Microsoft.OData.Edm;
+using OData.Schema.Validation.Models;
+using System.IO;
 using System.IO.Compression;
+using System.Text;
 
 namespace OData.Schema.Validation.Utils
 {
     public class GitUtilities
     {
 
-        public static async Task<Dictionary<string, IEdmModel>> GetSchemasFromBranch(string userName, string branchName)
+        public static async Task<Dictionary<string, ModelContainer>> GetSchemasFromBranch(string userName, string branchName)
         {
             var branchDownloadUrl = $"https://github.com/{userName}/OData-Sample-Schema/archive/refs/heads/{branchName}.zip";
             HttpClient client = new();
@@ -14,9 +17,9 @@ namespace OData.Schema.Validation.Utils
             return ExtractSchemasFromZip(file);
         }
 
-        public static Dictionary<string, IEdmModel> ExtractSchemasFromZip(Stream memStream)
+        public static Dictionary<string, ModelContainer> ExtractSchemasFromZip(Stream memStream)
         {
-            var schemaFiles = new Dictionary<string, IEdmModel>();
+            var schemaFiles = new Dictionary<string, ModelContainer>();
 
             using (var readArchive = new ZipArchive(memStream, ZipArchiveMode.Read))
             {
@@ -27,7 +30,7 @@ namespace OData.Schema.Validation.Utils
                     {
                         using Stream entryStream = entry.Open();
                         IEdmModel model = EdmModelParser.ParseEdmModel(entryStream);
-                        schemaFiles.Add(Path.GetFileNameWithoutExtension(entry.Name), model);
+                        schemaFiles.Add(Path.GetFileNameWithoutExtension(entry.Name), new ModelContainer(model, StreamToString(entry.Open())));
                     }
                 }
             }
@@ -35,6 +38,13 @@ namespace OData.Schema.Validation.Utils
             return schemaFiles;
         }
 
+        public static string StreamToString(Stream stream)
+        {
+            using (StreamReader streamReader = new StreamReader(stream))
+            {
+               return streamReader.ReadToEnd();
+            }
+        }
         private static HttpClient GetGithubHttpClient()
         {
             return new HttpClient
