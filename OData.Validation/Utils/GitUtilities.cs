@@ -8,12 +8,12 @@ namespace OData.Schema.Validation.Utils
 {
     public class GitUtilities
     {
-
-        public static async Task<Dictionary<string, ModelContainer>> GetSchemasFromBranch(string userName, string branchName)
+        public static async Task<Dictionary<string, ModelContainer>> GetSchemasFromBranch(string repoName, string branchName)
         {
-            var branchDownloadUrl = $"https://github.com/{userName}/OData-Sample-Schema/archive/refs/heads/{branchName}.zip";
-            HttpClient client = new();
+            var branchDownloadUrl = $"https://github.com/{repoName}/archive/refs/heads/{branchName}.zip";
+            var client = new HttpClient();
             var file = await client.GetStreamAsync(branchDownloadUrl);
+           
             return ExtractSchemasFromZip(file);
         }
 

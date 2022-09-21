@@ -2,15 +2,6 @@
 
 public class ActionInputs
 {
-    public ActionInputs()
-    {
-        if (Environment.GetEnvironmentVariable(
-            "GREETINGS") is { Length: > 0 } greetings)
-        {
-            Console.WriteLine(greetings);
-        }
-    }
-
     [Option('b', "branch",
         Required = true,
         HelpText = "The source branch.")]
@@ -21,4 +12,15 @@ public class ActionInputs
         Required = true,
         HelpText = "The target branch.")]
     public string TargetBranch { get; set; } = null!;
+
+
+    [Option('o', "repoOwner",
+        Required = true,
+        HelpText = "Repository owner.")]
+    public string RepoOwner { get; set; } = null!;
+
+    [Option('n', "repoName",
+    Required = true,
+    HelpText = "Name of the repository.")]
+    public string RepoName { get; set; } = null!;
 }

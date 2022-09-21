@@ -18,3 +18,7 @@ runs:
   - ${{ inputs.branch }}
   - '-t'
   - ${{ inputs.targetBranch }}
+  - '-o'
+  - ${{ inputs.repoOwner }}
+  - '-n'
+  - ${{ inputs.repoName }}
