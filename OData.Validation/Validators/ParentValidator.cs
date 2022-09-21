@@ -56,9 +56,18 @@ namespace OData.Schema.Validation.Utils
             {
                 if (DestinationSchemas.TryGetValue(sourceSchema.Key, out var destinationSchema))
                 {
+                    keySet.Remove(sourceSchema.Key);
                     ComparisonReport = Comparer.Compare(StringToStream(sourceSchema.Value.Csdl), StringToStream(destinationSchema.Csdl));
                 }
+            }
 
+            string emptyCsdl = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<edmx:Edmx xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\" Version=\"4.0\"></edmx:Edmx>";
+            foreach (var key in keySet)
+            {
+                if (DestinationSchemas.TryGetValue(key, out var destinationSchema))
+                {
+                    ComparisonReport = Comparer.Compare(StringToStream(emptyCsdl), StringToStream(destinationSchema.Csdl));
+                }
             }
         }
 
