@@ -1,4 +1,6 @@
-﻿namespace OData.Inspector;
+﻿using OData.Schema.Validation.Utils;
+
+namespace OData.Inspector;
 public class Program
 {
     public static async Task Main(string[] args)
@@ -29,6 +31,16 @@ public class Program
 
     static async Task StartSchemaAnalysisAsync(ActionInputs inputs, IHost host)
     {
+        string sourceBranch = "patch-1";
+        string destinationBranch = "patch-1";
+        string userName = "wachugamaina";
+        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(userName, sourceBranch);
+        var destinationSchemas = await GitUtilities.GetSchemasFromBranch(userName, destinationBranch);
+
+        ParentValidator validator = new ParentValidator(sourceSchemas, destinationSchemas);
+        validator.RunValidateion();
+
+
         await Task.Delay(1);
 
         Get<ILoggerFactory>(host)
