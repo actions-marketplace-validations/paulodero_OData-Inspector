@@ -18,3 +18,5 @@ runs:
   - ${{ inputs.branch }}
   - '-t'
   - ${{ inputs.targetBranch }}
+    - '-u'
+  - ${{ inputs.username }}
