@@ -2,15 +2,6 @@
 
 public class ActionInputs
 {
-    public ActionInputs()
-    {
-        if (Environment.GetEnvironmentVariable(
-            "GREETINGS") is { Length: > 0 } greetings)
-        {
-            Console.WriteLine(greetings);
-        }
-    }
-
     [Option('b', "branch",
         Required = true,
         HelpText = "The source branch.")]
