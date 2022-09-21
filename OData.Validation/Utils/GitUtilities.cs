@@ -9,8 +9,9 @@ namespace OData.Schema.Validation.Utils
         public static async Task<Dictionary<string, IEdmModel>> GetSchemasFromBranch(string userName, string branchName)
         {
             var branchDownloadUrl = $"https://github.com/{userName}/OData-Sample-Schema/archive/refs/heads/{branchName}.zip";
-            HttpClient client = new();
+            var client = new HttpClient();
             var file = await client.GetStreamAsync(branchDownloadUrl);
+           
             return ExtractSchemasFromZip(file);
         }
 

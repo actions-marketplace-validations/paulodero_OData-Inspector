@@ -21,4 +21,10 @@ public class ActionInputs
         Required = true,
         HelpText = "The target branch.")]
     public string TargetBranch { get; set; } = null!;
+
+
+    [Option('u', "username",
+        Required = true,
+        HelpText = "GitHub username.")]
+    public string Username { get; set; } = null!;
 }

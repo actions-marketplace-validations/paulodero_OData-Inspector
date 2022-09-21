@@ -1,6 +1,6 @@
-﻿using OData.Schema.Validation.Utils;
+﻿namespace OData.Inspector;
+using OData.Schema.Validation.Utils;
 
-namespace OData.Inspector;
 public class Program
 {
     public static async Task Main(string[] args)
@@ -16,8 +16,7 @@ public class Program
             {
                 Get<ILoggerFactory>(host)
                     .CreateLogger("OData.Inspector")
-                    .LogError(
-                        string.Join(Environment.NewLine, errors.Select(error => error.ToString())));
+                    .LogError(string.Join(Environment.NewLine, errors.Select(error => error.ToString())));
 
                 Environment.Exit(2);
             });
@@ -28,25 +27,33 @@ public class Program
     private static TService Get<TService>(IHost host)
             where TService : notnull =>
             host.Services.GetRequiredService<TService>();
-
-    static async Task StartSchemaAnalysisAsync(ActionInputs inputs, IHost host)
+    
+    /// <summary>
+    /// Schema analysis.
+    /// </summary>
+    /// <param name="inputs">Input parameters. An instance of <see cref="ActionInputs"/>.</param>
+    /// <param name="host">Host.</param>
+    /// <returns>async task.</returns>
+    private static async Task StartSchemaAnalysisAsync(ActionInputs inputs, IHost host)
     {
-        string sourceBranch = "patch-1";
-        string destinationBranch = "patch-1";
-        string userName = "wachugamaina";
-        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(userName, sourceBranch);
-        var destinationSchemas = await GitUtilities.GetSchemasFromBranch(userName, destinationBranch);
+        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(inputs.Username, inputs.SourceBranch);
+        var validator = new SchemaValidator(sourceSchemas);
+        
+        validator.RunValidation();
 
-        ParentValidator validator = new ParentValidator(sourceSchemas, destinationSchemas);
-        validator.RunValidateion();
+        var logger = Get<ILoggerFactory>(host).CreateLogger("OData.Inspector");
+        foreach (var error in validator.validationErrors)
+        {
+            logger.LogError(error.ErrorMessage);
+        }
 
-
-        await Task.Delay(1);
-
-        Get<ILoggerFactory>(host)
-                .CreateLogger("OData.Inspector")
-        .LogError("An error has been detected in the flow.");
-
-        Environment.Exit(-1);
+        if (validator.validationErrors.Any())
+        {
+            Environment.Exit(-1);
+        }
+        else
+        {
+            Environment.Exit(0);
+        }
     }
 }

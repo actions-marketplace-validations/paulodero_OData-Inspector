@@ -3,35 +3,31 @@ using Microsoft.OData.Edm.Validation;
 
 namespace OData.Schema.Validation.Utils
 {
-    public class ParentValidator
+    public class SchemaValidator
     {
-        Dictionary<string, IEdmModel> SourceSchemas;
-        Dictionary<string, IEdmModel> DestinationSchemas;
-        IEnumerable<EdmError> validationErrors;
+        private readonly Dictionary<string, IEdmModel> schema;
+        public IEnumerable<EdmError> validationErrors;
 
-        public ParentValidator (Dictionary<string, IEdmModel> sourceSchemas, Dictionary<string, IEdmModel> destinationSchemas)
+        public SchemaValidator (Dictionary<string, IEdmModel> sourceSchemas)
         {
-            SourceSchemas = sourceSchemas;
-            DestinationSchemas = destinationSchemas;
+            schema = sourceSchemas;
+            validationErrors = Enumerable.Empty<EdmError>();
         }
 
-        public void RunValidateion()
+        public void RunValidation()
         {
-            validationErrors = ValdateSchema(DestinationSchemas);
+            validationErrors = ValdateSchema(schema);
         }
-
-            public IEnumerable<EdmError> ValdateSchema(Dictionary<string, IEdmModel> schemas)
+        public static IEnumerable<EdmError> ValdateSchema(Dictionary<string, IEdmModel> schemas)
         {
-            List<EdmError> validationErrorList = new List<EdmError>();
-
+            var validationErrorList = new List<EdmError>();
             foreach (var schema in schemas)
             {
                 if (schema.Value != null)
                 {
                     var ruleset = ValidationRuleSet.GetEdmModelRuleSet(new Version(4, 0));
 
-                    IEnumerable<EdmError> validationErrors;
-                    _ = schema.Value.Validate(ruleset, out validationErrors);
+                    _ = schema.Value.Validate(ruleset, out IEnumerable<EdmError> validationErrors);
                     validationErrorList.AddRange(validationErrors);
                 }
             }
