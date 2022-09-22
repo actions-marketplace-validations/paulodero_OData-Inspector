@@ -36,9 +36,12 @@ public class Program
     /// <returns>async task.</returns>
     private static async Task StartSchemaAnalysisAsync(ActionInputs inputs, IHost host)
     {
-        var destinationSchemas = await GitUtilities.GetSchemasFromBranch(inputs.RepoName, inputs.TargetBranch);
-        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(inputs.RepoName, inputs.SourceBranch);
-        var validator = new SchemaValidator(sourceSchemas, destinationSchemas);
+        var appLogger = new Logger();
+        var gitUtilities = new GitUtilities(appLogger);
+        var oldSchemas = await gitUtilities.GetSchemasFromBranch(inputs.RepoName, inputs.TargetBranch);
+        var newSchemas = await gitUtilities.GetSchemasFromBranch(inputs.RepoName, inputs.SourceBranch);
+        var validator = new SchemaValidator(newSchemas, oldSchemas, appLogger);
+
         
         validator.RunValidation();
 

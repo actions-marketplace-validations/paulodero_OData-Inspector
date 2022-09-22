@@ -1,14 +1,20 @@
 ﻿using Microsoft.OData.Edm;
 using OData.Schema.Validation.Models;
-using System.IO;
 using System.IO.Compression;
-using System.Text;
 
 namespace OData.Schema.Validation.Utils
 {
     public class GitUtilities
     {
-        public static async Task<Dictionary<string, ModelContainer>> GetSchemasFromBranch(string repoName, string branchName)
+
+        public Logger Logger;
+
+        public GitUtilities(Logger logger)
+        {
+            Logger = logger;
+        }
+
+        public async Task<Dictionary<string, ModelContainer>> GetSchemasFromBranch(string repoName, string branchName)
         {
             var branchDownloadUrl = $"https://github.com/{repoName}/archive/refs/heads/{branchName}.zip";
             var client = new HttpClient();
@@ -17,7 +23,7 @@ namespace OData.Schema.Validation.Utils
             return ExtractSchemasFromZip(file);
         }
 
-        public static Dictionary<string, ModelContainer> ExtractSchemasFromZip(Stream memStream)
+        public Dictionary<string, ModelContainer> ExtractSchemasFromZip(Stream memStream)
         {
             var schemaFiles = new Dictionary<string, ModelContainer>();
 
@@ -29,8 +35,10 @@ namespace OData.Schema.Validation.Utils
                     if (entry.Name.EndsWith(".csdl"))
                     {
                         using Stream entryStream = entry.Open();
-                        IEdmModel model = EdmModelParser.ParseEdmModel(entryStream);
-                        schemaFiles.Add(Path.GetFileNameWithoutExtension(entry.Name), new ModelContainer(model, StreamToString(entry.Open())));
+                        EdmModelParser edmModelParser = new EdmModelParser(Logger);
+                        IEdmModel model = edmModelParser.ParseEdmModel(entryStream);
+                        var csdl = StreamToString(entry.Open());
+                        schemaFiles.Add(Path.GetFileNameWithoutExtension(entry.Name), new ModelContainer(model, csdl));
                     }
                 }
             }
