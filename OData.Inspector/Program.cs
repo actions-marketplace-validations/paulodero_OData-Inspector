@@ -1,4 +1,4 @@
-﻿namespace OData.Inspector;
+namespace OData.Inspector;
 using OData.Schema.Validation.Utils;
 
 public class Program
@@ -36,18 +36,19 @@ public class Program
     /// <returns>async task.</returns>
     private static async Task StartSchemaAnalysisAsync(ActionInputs inputs, IHost host)
     {
-        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(inputs.RepoName,inputs.RepoName, inputs.SourceBranch);
-        var validator = new SchemaValidator(sourceSchemas);
+        var destinationSchemas = await GitUtilities.GetSchemasFromBranch(inputs.RepoName, inputs.TargetBranch);
+        var sourceSchemas = await GitUtilities.GetSchemasFromBranch(inputs.RepoName, inputs.SourceBranch);
+        var validator = new SchemaValidator(sourceSchemas, destinationSchemas);
         
         validator.RunValidation();
 
         var logger = Get<ILoggerFactory>(host).CreateLogger("OData.Inspector");
-        foreach (var error in validator.validationErrors)
+        foreach (var error in validator.ValidationErrors)
         {
             logger.LogError(error.ErrorMessage);
         }
 
-        if (validator.validationErrors.Any())
+        if (validator.ValidationErrors.Any())
         {
             Environment.Exit(-1);
         }
