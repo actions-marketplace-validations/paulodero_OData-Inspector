@@ -1,10 +1,7 @@
 ﻿using GillSoft.XmlComparer;
 using GillSoft.XmlComparer.ConsoleApp;
-using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Validation;
 using System.Text;
-using System.Xml;
-using Microsoft.OData.Edm.Csdl;
 using OData.Schema.Validation.Models;
 using OData.Schema.Validation.Utils.XmlComparer;
 
@@ -17,20 +14,40 @@ namespace OData.Schema.Validation.Utils
         Comparer Comparer;
         ComparisonReport ComparisonReport;
         public IEnumerable<EdmError> ValidationErrors;
+        public Logger Logger;
 
-        public SchemaValidator(Dictionary<string, ModelContainer> sourceSchemas, Dictionary<string, ModelContainer> destinationSchemas)
+        public SchemaValidator(Dictionary<string, ModelContainer> sourceSchemas, Dictionary<string, ModelContainer> destinationSchemas, Logger logger)
         {
             SourceSchemas = sourceSchemas;
             DestinationSchemas = destinationSchemas;
             Comparer = new Comparer(new TestXmlCompareHandler());
             ComparisonReport = new ComparisonReport();
             ValidationErrors = Enumerable.Empty<EdmError>();
+            Logger = logger;
         }
 
         public void RunValidation()
         {
-            ValidationErrors = ValdateSchema(DestinationSchemas);
+            ValidationErrors = ValdateSchema(SourceSchemas);
+            foreach (var error in ValidationErrors)
+            {
+                var logEntry = new LogEntry(LogLevel.Error, error.ErrorMessage, "OdataError", error.ErrorLocation.ToString());
+                Logger.Log(logEntry);
+            }
+
+            ValidateBreakingChanges();
+        }
+
+        public void ValidateBreakingChanges()
+        {
             CompareCsdl();
+            foreach (var deletion in ComparisonReport.Removals)
+            {
+                var errorMessage = "Deleted " + deletion.XPath;
+                var logEntry = new LogEntry(LogLevel.Warning, errorMessage, "BreakingChange.Deletion", deletion.LineNumber.ToString(), deletion.XPath, deletion.Element);
+                Logger.Log(logEntry);
+            }
+
         }
 
         public void CompareCsdl()

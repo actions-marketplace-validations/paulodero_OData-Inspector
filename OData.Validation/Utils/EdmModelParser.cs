@@ -8,7 +8,14 @@ namespace OData.Schema.Validation.Utils
 {
     public class EdmModelParser
     {
-        public static IEdmModel ParseEdmModel(Stream stream)
+        public Logger Logger;
+
+        public EdmModelParser(Logger logger)
+        {
+            Logger = logger;
+        }
+
+        public IEdmModel ParseEdmModel(Stream stream)
         {
             var memStream = new MemoryStream();
             stream.CopyTo(memStream);
@@ -29,9 +36,9 @@ namespace OData.Schema.Validation.Utils
                 foreach (EdmError error in errors)
                 {
                     _ = sb.AppendLine(error.ErrorMessage);
+                    var entry = new LogEntry(LogLevel.Error, error.ErrorMessage, "Edm Parser error");
+                    Logger.Log(entry);
                 }
-
-                throw new Exception(sb.ToString());
             }
 
             return model;
