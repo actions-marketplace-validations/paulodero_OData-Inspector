@@ -46,12 +46,12 @@ public class Program
         validator.RunValidation();
 
         var logger = Get<ILoggerFactory>(host).CreateLogger("OData.Inspector");
-        foreach (var error in validator.ValidationErrors)
+        foreach (var entry in appLogger.LogEntries)
         {
-            logger.LogError(error.ErrorMessage);
+            logger.LogError(entry.Message);
         }
 
-        if (validator.ValidationErrors.Any())
+        if (appLogger.LogEntries.Any())
         {
             Environment.Exit(-1);
         }

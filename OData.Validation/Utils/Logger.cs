@@ -2,11 +2,11 @@
 {
     public class Logger
     {
-        public List<LogEntry> logEntries = new();
+        public List<LogEntry> LogEntries = new();
 
         public void Log(LogEntry logEntry)
         {
-            logEntries.Add(logEntry);
+            LogEntries.Add(logEntry);
         }
     }
 }

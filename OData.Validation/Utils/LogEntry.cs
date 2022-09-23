@@ -1,4 +1,6 @@
-﻿namespace OData.Schema.Validation.Utils
+﻿using System.Xml.Linq;
+
+namespace OData.Schema.Validation.Utils
 {
     public class LogEntry
     {
@@ -10,7 +12,7 @@
         public string Location { get; set; }
         public XElement Element { get; set; }
 
-        public LogEntry(LogLevel logLevel, string message = "", string entryType = "", string location = "", string path = "", string element = null) 
+        public LogEntry(LogLevel logLevel, string message = "", string entryType = "", string location = "", string path = "", XElement element = null) 
         {
             LogLevel = logLevel;
             Message = message;
