@@ -48,7 +48,8 @@ public class Program
         var logger = Get<ILoggerFactory>(host).CreateLogger("OData.Inspector");
         foreach (var entry in appLogger.LogEntries)
         {
-            logger.LogError(entry.Message);
+            var message = $"{entry.EntryType} {entry.Message}";
+            logger.LogError(message);
         }
 
         if (appLogger.LogEntries.Any())
