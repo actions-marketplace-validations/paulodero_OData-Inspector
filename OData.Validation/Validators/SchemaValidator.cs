@@ -59,7 +59,7 @@ namespace OData.Schema.Validation.Utils
                 if (DestinationSchemas.TryGetValue(sourceSchema.Key, out var destinationSchema))
                 {
                     keySet.Remove(sourceSchema.Key);
-                    ComparisonReport = Comparer.Compare(StringToStream(sourceSchema.Value.Csdl), StringToStream(destinationSchema.Csdl));
+                    ComparisonReport = Comparer.Compare(StringToStream(destinationSchema.Csdl), StringToStream(sourceSchema.Value.Csdl));
                 }
             }
 
