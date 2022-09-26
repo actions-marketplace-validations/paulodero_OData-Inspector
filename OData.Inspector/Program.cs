@@ -9,19 +9,18 @@ public class Program
             .ConfigureServices((_, services) =>{})
             .Build();
         var parser = Default.ParseArguments<ActionInputs>(() => new(), args);
-            
+        var logger = Get<ILoggerFactory>(host).CreateLogger("OData.Inspector");
+        
         // If the no parameters/invalid parameters are passed.
         parser.WithNotParsed(
             errors =>
             {
-                Get<ILoggerFactory>(host)
-                    .CreateLogger("OData.Inspector")
-                    .LogError(string.Join(Environment.NewLine, errors.Select(error => error.ToString())));
+                logger.LogError(string.Join(Environment.NewLine, errors.Select(error => error.ToString())));
 
                 Environment.Exit(2);
             });
 
-        await parser.WithParsedAsync(options => StartSchemaAnalysisAsync(options, host));
+        await parser.WithParsedAsync(options => StartSchemaAnalysisAsync(options, logger));
         await host.RunAsync();
     }
     private static TService Get<TService>(IHost host)
@@ -34,7 +33,7 @@ public class Program
     /// <param name="inputs">Input parameters. An instance of <see cref="ActionInputs"/>.</param>
     /// <param name="host">Host.</param>
     /// <returns>async task.</returns>
-    private static async Task StartSchemaAnalysisAsync(ActionInputs inputs, IHost host)
+    private static async Task StartSchemaAnalysisAsync(ActionInputs inputs, ILogger logger)
     {
         var appLogger = new Logger();
         var gitUtilities = new GitUtilities(appLogger);
@@ -44,8 +43,6 @@ public class Program
 
         
         validator.RunValidation();
-
-        var logger = Get<ILoggerFactory>(host).CreateLogger("OData.Inspector");
         foreach (var entry in appLogger.LogEntries)
         {
             var message = $"{entry.EntryType} {entry.Message}";
