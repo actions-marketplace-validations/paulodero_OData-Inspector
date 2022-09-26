@@ -6,7 +6,8 @@ public class Program
     public static async Task Main(string[] args)
     {
         using IHost host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices((_, services) =>{})
+            .ConfigureServices((_, services) => services
+            .AddDotNetCodeAnalysisServices())
             .Build();
         var parser = Default.ParseArguments<ActionInputs>(() => new(), args);
         var logger = Get<ILoggerFactory>(host).CreateLogger("OData.Inspector");
